@@ -1,0 +1,38 @@
+POST http://localhost:3002/API/v1/apiusers
+Content-Type: application/json
+
+{
+    "firstName": "Test",
+    "lastName": "User",
+    "email": "test@test.com",
+    "password": "12345"
+}
+
+###
+GET http://localhost:5001/tasks
+Content-Type: application/json
+
+###
+
+DELETE  http://localhost:3002/API/v1/apiusers/5e583e7a1c9d440000bac9b3
+
+###
+
+PUT http://localhost:3002/API/v1/apiusers/5e56e5d66a2bcd08423ba33f
+Content-Type: application/json
+
+{
+    "firstName": "PUT YOUR NAME HERE",
+    "lastName": "User is updated",
+    "email": "test@test.com",
+    "password": "123456",
+}
+
+###
+
+PATCH http://localhost:3002/API/v1/apientries/5e6034d91e4d4584415b7f6c
+Content-Type: application/json
+
+{
+    "entry": "EDIT EDIT EDIT"
+}
