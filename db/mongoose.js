@@ -5,7 +5,7 @@ require('dotenv').config()
 // Connect to db
 function connect(objConnect) {
 
-    const uri = `mongodb+srv://todo_user:1234@cluster0-caj9q.mongodb.net/test?retryWrites=true&w=majority`;
+    const uri = process.env.ATLAS_CONNECTION;
 
     return mongoose.connect(uri, {
         useNewUrlParser: true,
