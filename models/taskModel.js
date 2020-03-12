@@ -17,6 +17,8 @@ const tasksSchema = new Schema({
 
 })
 
+//const myDB = mongoose.connection.useDb('to-do')
+
 // (name, schema, collection)
 module.exports.tasksModel = mongoose.model('Tasks', tasksSchema, 'tasks')
 

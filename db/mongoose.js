@@ -1,11 +1,42 @@
 const mongoose = require('mongoose')
 const {tasksModel: Tasks, tasksSchema} = require('../models/taskModel')
+const {usersModel: Users, usersSchema} = require('../models/userModel')
 require('dotenv').config()
+
+function schemaToArray(schema) {
+
+    let rtnValue = []
+
+    //console.log(schema)
+
+    for (let key in schema){
+        
+        //TODO
+        // Check for only the two properties that we want
+        // by checking for class type Model and Schema
+
+        rtnValue.push(schema[key])
+    }
+
+    return rtnValue
+}
+
+// let model = null
+// let schema = null
+
+// function setDependency (modelValue, schemaValue) {
+
+//     let model = modelValue
+//     let schema = schemaValue
+
+// }
 
 // Connect to db
 function connect(objConnect) {
 
-    const uri = process.env.ATLAS_CONNECTION;
+    let uri = 'mongodb+srv://todo_user:12345@cluster0-caj9q.mongodb.net/test?retryWrites=true&w=majority'
+
+    console.log("Trying to connect")
 
     return mongoose.connect(uri, {
         useNewUrlParser: true,
@@ -53,10 +84,25 @@ function readOne(objRead) {
     return Tasks.findById(objRead.id).exec()
 }
 
-// GET - Read All
-function readAll(objRead){
+// GET - Find One
+// function findOne(objFind, schemaObj){
 
-    return Tasks.find().exec()
+//     let [model, schema] = schemaToArray(schemaObj)
+
+//     console.log("mongoose","objfind.email",objFind.email)
+
+//     //{email: objFind.email}
+
+
+//     return model.find({}).exec()
+// }
+
+// GET - Read All
+function readAll(objRead, schemaObj){
+
+    let [model, schema] = schemaToArray(schemaObj)
+
+    return model.find().exec()
 }
 
 // PATCH - Update
@@ -114,7 +160,9 @@ module.exports.connect = connect
 module.exports.close = close
 module.exports.create = create
 module.exports.readOne = readOne
+// module.exports.findOne = findOne
 module.exports.readAll = readAll
 module.exports.update = update
 module.exports.replace = replace
 module.exports.del = del
+// module.exports.setDependency = setDependency

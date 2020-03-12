@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const db = require('../../../db/mongoose')
+const dbTasks = require('../../../models/taskModel')
 
 
 // GET all entries
@@ -12,7 +13,7 @@ router.get('/', function (req, res, next) {
         usersCollection: req.app.locals.usersCollection
     }
 
-    db.readAll(readObj)
+    db.readAll(readObj,dbTasks)
         .then(response => {
 
             res.json(response)
@@ -26,7 +27,7 @@ router.get('/', function (req, res, next) {
 
 });
 
-// GET single user
+// GET single entry
 router.get('/:id', function (req, res, next) {
 
     let readObj = {

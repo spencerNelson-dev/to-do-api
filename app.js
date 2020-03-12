@@ -7,15 +7,18 @@ require('dotenv').config
 const db = require('./db/mongoose')
 const cors = require('cors')
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+//var indexRouter = require('./routes/index');
+//var usersRouter = require('./routes/users');
 const taskApiRouter = require('./routes/api/v1/api-tasks')
+const userApiRouter = require('./routes/api/v1/api-users')
 
 var app = express();
 
 //connect to db
 db.connect(app.locals)
   .then(dbConnection => {
+
+    console.log("connected")
 
     // view engine setup
     app.set('views', path.join(__dirname, 'views'));
@@ -29,7 +32,7 @@ db.connect(app.locals)
     app.use(express.static(path.join(__dirname, 'public')));
 
     //app.use('/', indexRouter);
-    app.use('/users', usersRouter);
+    app.use('/users', userApiRouter);
     app.use('/tasks', taskApiRouter)
 
     // catch 404 and forward to error handler
