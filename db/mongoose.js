@@ -79,30 +79,27 @@ function create(objCreate) {
 }
 
 // GET - Read One
-function readOne(objRead) {
+function readOne(objRead, schemaObj) {
 
-    return Tasks.findById(objRead.id).exec()
+    let [model, schema] = schemaToArray(schemaObj)
+    
+    return model.findById(objRead.id).exec()
 }
-
-// GET - Find One
-// function findOne(objFind, schemaObj){
-
-//     let [model, schema] = schemaToArray(schemaObj)
-
-//     console.log("mongoose","objfind.email",objFind.email)
-
-//     //{email: objFind.email}
-
-
-//     return model.find({}).exec()
-// }
-
+ 
 // GET - Read All
 function readAll(objRead, schemaObj){
 
     let [model, schema] = schemaToArray(schemaObj)
 
     return model.find().exec()
+}
+
+// GET - Read All Tasks by User Id
+function readAllByUser(objRead, schemaObj) {
+
+    let [model, schema] = schemaToArray(schemaObj)
+
+    return model.find({userId: objRead.id}).exec()
 }
 
 // PATCH - Update
@@ -160,7 +157,7 @@ module.exports.connect = connect
 module.exports.close = close
 module.exports.create = create
 module.exports.readOne = readOne
-// module.exports.findOne = findOne
+module.exports.readAllByUser = readAllByUser
 module.exports.readAll = readAll
 module.exports.update = update
 module.exports.replace = replace

@@ -7,8 +7,6 @@ const dbTasks = require('../../../models/taskModel')
 // GET all entries
 router.get('/', function (req, res, next) {
 
-    console.log("get")
-
     let readObj = {
         usersCollection: req.app.locals.usersCollection
     }
@@ -28,23 +26,44 @@ router.get('/', function (req, res, next) {
 });
 
 // GET single entry
-router.get('/:id', function (req, res, next) {
+router.get('/task/:taskId', function(req, res, next) {
 
     let readObj = {
-        id: req.params.id,
+        id: req.params.taskId,
         usersCollection: req.app.locals.usersCollection
     }
 
-    db.readOne(readObj)
+    db.readOne(readObj,dbTasks)
         .then(response => {
 
-            console.log(response.fullName())
             res.json(response)
         })
         .catch(error => {
+            console.log(error)
             res.status(500).json(error)
         })
 })
+
+// GET all tasks with a certian user_id
+router.get('/:userId', function (req, res, next) {
+
+    let readObj = {
+        id: req.params.userId,
+        usersCollection: req.app.locals.usersCollection
+    }
+
+    db.readAllByUser(readObj,dbTasks)
+        .then(response => {
+
+            res.json(response)
+        })
+        .catch(error => {
+            console.log(error)
+            res.status(500).json(error)
+        })
+})
+
+/* POSTS */
 
 // POST Entry
 router.post('/', function (req, res, next) {
@@ -80,7 +99,7 @@ router.delete('/:id', async function (req, res, next) {
 
     try {
 
-        let foundUser = await db.readOne(deleteObj)
+        let foundUser = await db.readOne(deleteObj, dbTasks)
 
         console.log(foundUser)
 
@@ -111,7 +130,7 @@ router.put('/:id', async function (req, res, next) {
 
     try {
 
-        let response = await db.readOne(putObj)
+        let response = await db.readOne(putObj, dbTasks)
 
         if (response == null) {
 
@@ -145,7 +164,7 @@ router.patch('/:id', async function (req, res, next) {
 
     try {
 
-        let response = await db.readOne(patchObj)
+        let response = await db.readOne(patchObj,dbTasks)
 
         if (response == null) {
 
@@ -154,9 +173,9 @@ router.patch('/:id', async function (req, res, next) {
         } else {
 
             // if found
-            await db.update(patchObj)
+            await db.update(patchObj,dbTasks)
 
-            res.json(await db.readOne(patchObj))
+            res.json(await db.readOne(patchObj,dbTasks))
         }
 
     } catch (error) {

@@ -13,6 +13,9 @@ const tasksSchema = new Schema({
     },
     isComplete: {
         type: Boolean
+    },
+    userId: {
+        type: String
     }
 
 })
