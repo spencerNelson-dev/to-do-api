@@ -2,16 +2,30 @@ var express = require('express');
 var router = express.Router();
 const db = require('../../../db/mongoose')
 const dbTasks = require('../../../models/taskModel')
+const passport = require('passport')
+const jwtUtils = require('../../../bin/jwtUtils')
+const verify = require('../../../bin/verify')
 
 
-// GET all entries
-router.get('/', function (req, res, next) {
+// GET all tasks
+router.get('/', passport.authenticate('bearer', {session: false}),
+  async function (req, res, next) {
+
+    // verify bearerToken
+    let user = await jwtUtils.verifyBearerToken(req)
+
+    // verify that user is in db and has admin privlages
+    let isVerified = await verify.verifyUser(user)
+
+    console.log("isVerified", isVerified)
 
     let readObj = {
         usersCollection: req.app.locals.usersCollection
     }
 
-    db.readAll(readObj,dbTasks)
+    if(user.admin && isVerified){
+
+        db.readAll(readObj,dbTasks)
         .then(response => {
 
             res.json(response)
@@ -21,6 +35,10 @@ router.get('/', function (req, res, next) {
             console.log(error)
             res.json(500)
         })
+    } else {
+
+        res.send("Not Authorized")
+    }
 
 
 });
@@ -75,7 +93,9 @@ router.post('/', function (req, res, next) {
         usersCollection: req.app.locals.usersCollection
     }
 
-    db.create(createObj)
+    console.log("tasks post", createObj)
+
+    db.create(createObj, dbTasks)
         .then(response => {
             res.json(response) //.ops[0] for mongo
         })
@@ -83,7 +103,7 @@ router.post('/', function (req, res, next) {
             res.status(500).json(error)
         })
         .catch(err => {
-            res.send(`User was not created.\nSomething went wrong with the password.`)
+            res.send(`Task was not created`)
         })
 
 })

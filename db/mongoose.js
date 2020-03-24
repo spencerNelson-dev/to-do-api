@@ -1,6 +1,4 @@
 const mongoose = require('mongoose')
-const {tasksModel: Tasks, tasksSchema} = require('../models/taskModel')
-const {usersModel: Users, usersSchema} = require('../models/userModel')
 require('dotenv').config()
 
 function schemaToArray(schema) {
@@ -58,14 +56,16 @@ function close(){
 }
 
 // POST - Create
-function create(objCreate) {
+function create(objCreate, schemaObj) {
+
+    let [model, schema] = schemaToArray(schemaObj)
 
     let serial = {}
 
     //use the schema as a template to check for properties
     //in document to write if the documente has a matching
     //property copy it to new object write the new object
-    for (let key in tasksSchema.obj){
+    for (let key in schema.obj){
 
         if(objCreate.doc.hasOwnProperty(key)){
 
@@ -74,8 +74,7 @@ function create(objCreate) {
         
     }
 
-    return Tasks.create(serial)
-
+    return model.create(serial)
 }
 
 // GET - Read One
@@ -84,6 +83,14 @@ function readOne(objRead, schemaObj) {
     let [model, schema] = schemaToArray(schemaObj)
     
     return model.findById(objRead.id).exec()
+}
+
+// GET - Read by email
+function findUserByEmail(objRead, schemaObj) {
+
+    let [model, schema] = schemaToArray(schemaObj)
+
+    return model.find({email: objRead.email}).exec()
 }
  
 // GET - Read All
@@ -103,14 +110,16 @@ function readAllByUser(objRead, schemaObj) {
 }
 
 // PATCH - Update
-function update(objUpdate) {
+function update(objUpdate, schemaObj) {
+
+    let [model, schema] = schemaToArray(schemaObj)
 
     let serial = {}
 
     //use the schema as a template to check for properties
     //in document to write if the documente has a matching
     //property copy it to new object write the new object
-    for (let key in tasksSchema.obj){
+    for (let key in schema.obj){
 
         if(objUpdate.doc.hasOwnProperty(key)){
 
@@ -121,19 +130,21 @@ function update(objUpdate) {
 
     // {$set: serial} can also be passed as just serial as
     // mongoose will automatically put the atomic operator $set
-    return Tasks.updateOne({_id: objUpdate.id}, {$set: serial}).exec()
+    return model.updateOne({_id: objUpdate.id}, {$set: serial}).exec()
 }
 
 
 // PUT - Replace
-function replace(objReplace){
+function replace(objReplace, schemaObj){
+
+    let [model, schema] = schemaToArray(schemaObj)
 
     let serial = {}
 
     //use the schema as a template to check for properties
     //in document to write if the documente has a matching
     //property copy it to new object write the new object
-    for (let key in tasksSchema.obj){
+    for (let key in schema.obj){
 
         if(objReplace.doc.hasOwnProperty(key)){
 
@@ -142,21 +153,24 @@ function replace(objReplace){
     }
 
 
-    return Tasks.replaceOne({_id: objReplace.id}, serial).exec()
+    return model.replaceOne({_id: objReplace.id}, serial).exec()
 
 }
 
 // can't use delete as a function name 
 // because it is a js keyword
-function del(objDelete) {
+function del(objDelete, schemaObj) {
 
-    return Tasks.deleteOne({_id: objDelete.id}).exec()
+    let [model, schema] = schemaToArray(schemaObj)
+
+    return model.deleteOne({_id: objDelete.id}).exec()
 }
 
 module.exports.connect = connect
 module.exports.close = close
 module.exports.create = create
 module.exports.readOne = readOne
+module.exports.findUserByEmail = findUserByEmail
 module.exports.readAllByUser = readAllByUser
 module.exports.readAll = readAll
 module.exports.update = update

@@ -6,6 +6,12 @@ var logger = require('morgan');
 require('dotenv').config
 const db = require('./db/mongoose')
 const cors = require('cors')
+const passport = require('passport')
+
+// oauth stuff
+require('./bin/stratagies/googleOauth2')
+require('./bin/stratagies/facebookOauth')
+require('./bin/stratagies/bearer')
 
 //var indexRouter = require('./routes/index');
 //var usersRouter = require('./routes/users');
@@ -30,6 +36,8 @@ db.connect(app.locals)
     app.use(express.urlencoded({ extended: false }));
     app.use(cookieParser());
     app.use(express.static(path.join(__dirname, 'public')));
+
+    app.use(passport.initialize())
 
     //app.use('/', indexRouter);
     app.use('/users', userApiRouter);
