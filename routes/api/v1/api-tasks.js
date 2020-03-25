@@ -128,7 +128,7 @@ router.delete('/:id', async function (req, res, next) {
             throw new Error("No user with matching id was found")
         } else {
 
-            await db.del(deleteObj)
+            await db.del(deleteObj, dbTasks)
 
             res.json({})
         }
