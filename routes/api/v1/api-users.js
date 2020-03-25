@@ -270,6 +270,8 @@ router.use('/auth/google/callback',
         })
     })
 
+/* Facebook Oauth Section */
+
 router.get('/auth/facebook/login',
     passport.authenticate('facebook')
 )
