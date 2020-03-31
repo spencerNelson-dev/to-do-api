@@ -12,12 +12,10 @@ router.get('/', passport.authenticate('bearer', {session: false}),
   async function (req, res, next) {
 
     // verify bearerToken
-    let user = await jwtUtils.verifyBearerToken(req)
+    let {user} = await jwtUtils.verifyBearerToken(req)
 
     // verify that user is in db and has admin privlages
     let isVerified = await verify.verifyUser(user)
-
-    console.log("isVerified", isVerified)
 
     let readObj = {
         usersCollection: req.app.locals.usersCollection
@@ -93,8 +91,6 @@ router.post('/', function (req, res, next) {
         usersCollection: req.app.locals.usersCollection
     }
 
-    console.log("tasks post", createObj)
-
     db.create(createObj, dbTasks)
         .then(response => {
             res.json(response) //.ops[0] for mongo
@@ -120,8 +116,6 @@ router.delete('/:id', async function (req, res, next) {
     try {
 
         let foundUser = await db.readOne(deleteObj, dbTasks)
-
-        console.log(foundUser)
 
         if (foundUser === null) {
 
