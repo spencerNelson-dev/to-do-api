@@ -17,6 +17,7 @@
     "express-promise-router": "^3.0.3",
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^8.5.1",
+    "local-storage": "^2.0.0",
     "mongodb": "^3.5.4",
     "mongoose": "^5.9.3",
     "morgan": "~1.9.1",

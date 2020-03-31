@@ -5,6 +5,7 @@ const db = require('../../../db/mongoose')
 const dbUsers = require('../../../models/userModel')
 const bcrypt = require('bcrypt')
 const jwtUtils = require('../../../bin/jwtUtils')
+const ls = require('local-storage')
 
 
  async function checkPassword(password, hash){
@@ -165,6 +166,8 @@ async function(req, res, next) {
 // Post login
 router.post('/login', function (req, res, next) {
 
+    console.log("post login")
+
     let sentUser = req.body
 
     db.readAll(sentUser, dbUsers)
@@ -195,6 +198,10 @@ router.post('/login', function (req, res, next) {
         if(user == undefined){
             res.json({token: ''})
         }
+
+        // set the password to null so we don't
+        // pass the password in our jwt
+        user.password = null
 
         // Create web token
         // the payload is the user
@@ -266,7 +273,7 @@ router.use('/auth/google/callback',
         jwtUtils.newToken(user)
         .then(token => {
 
-            res.redirect(`${process.env.HEROKU}?token=${token}`)
+            res.redirect(`${process.env.INDEX}?token=${token}`)
         })
     })
 
@@ -323,7 +330,7 @@ router.use('/auth/facebook/callback',
         jwtUtils.newToken(user)
         .then(token => {
 
-            res.redirect(`${process.env.HEROKU}?token=${token}`)
+            res.redirect(`${process.env.INDEX}?token=${token}`)
         })
     }
 )
