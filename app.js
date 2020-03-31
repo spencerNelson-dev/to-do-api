@@ -36,6 +36,7 @@ db.connect(app.locals)
     app.use(express.urlencoded({ extended: false }));
     app.use(cookieParser());
     app.use(express.static(path.join(__dirname, 'public')));
+    app.use('/img', express.static( path.join(__dirname, 'img')));
 
     app.use(passport.initialize())
 
