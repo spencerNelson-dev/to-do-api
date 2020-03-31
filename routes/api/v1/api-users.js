@@ -296,11 +296,13 @@ router.use('/auth/facebook/callback',
         
         let names = req.user.displayName.split(" ")
 
+        console.log(req.user)
+
         let newUser ={
             firstName: names[0],
             lastName: names[names.length - 1],
             userName: '',
-            email: req.user.emails[0].value,
+            email: `${req.user.email || req.user.id}@facebook.com`,
             password: 'cna98p4pt9ragph985na',
             admin: false
         }
