@@ -118,9 +118,7 @@ async function(req, res, next) {
         } else {
 
             // if found
-            await db.update(patchObj,dbUsers)
-
-            res.json(await db.readOne(patchObj,dbUsers))
+            res.json(await db.update(patchObj,dbUsers))
         }
 
     } catch (error) {
@@ -152,9 +150,7 @@ async function(req, res, next) {
             throw new Error("No user with matching id was found")
         } else {
 
-            await db.del(deleteObj, dbUsers)
-
-            res.json({})
+            res.json(await db.del(deleteObj, dbUsers))
         }
 
     } catch (error) {
@@ -336,6 +332,11 @@ router.use('/auth/facebook/callback',
         })
     }
 )
+
+router.post('auth/verifytoken/',passport.authenticate('bearer', {session: false}),
+ function (req, res, next) {
+
+})
 
 /* When we want to protect our fetch in the front end
     router.get('/',

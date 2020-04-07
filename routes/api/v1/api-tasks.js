@@ -122,9 +122,9 @@ router.delete('/:id', async function (req, res, next) {
             throw new Error("No user with matching id was found")
         } else {
 
-            await db.del(deleteObj, dbTasks)
+            let dbResponse = await db.del(deleteObj, dbTasks)
 
-            res.json({})
+            res.json(dbResponse)
         }
 
     } catch (error) {
@@ -187,9 +187,7 @@ router.patch('/:id', async function (req, res, next) {
         } else {
 
             // if found
-            await db.update(patchObj,dbTasks)
-
-            res.json(await db.readOne(patchObj,dbTasks))
+            res.json(await db.update(patchObj,dbTasks))
         }
 
     } catch (error) {
