@@ -47,7 +47,8 @@ router.get('/', passport.authenticate('bearer', {session: false}),
 })
 
 // GET user by id
-router.get('/:id', function (req, res, next) {
+router.get('/:id',passport.authenticate('bearer', {session: false}),
+ function (req, res, next) {
     console.log("get user by id")
 
     let readObj = {
@@ -83,7 +84,7 @@ router.get('/email/:email', function(req, res, next) {
 })
 
 // POST - create user
-router.post('/create', passport.authenticate('bearer', {session: false}),
+router.post('/', passport.authenticate('bearer', {session: false}),
  async function(req, res, next) {
 
     // bycrpt the password
@@ -94,7 +95,7 @@ router.post('/create', passport.authenticate('bearer', {session: false}),
 })
 
 //PATCH - update user
-router.patch('/update/:id', passport.authenticate('bearer', {session: false}),
+router.patch('/:id', passport.authenticate('bearer', {session: false}),
 async function(req, res, next) {
 
     let patchObj = {
@@ -127,7 +128,7 @@ async function(req, res, next) {
 })
 
 // DELETE - user
-router.delete('/delete/:id', passport.authenticate('bearer', {session: false}),
+router.delete('/:id', passport.authenticate('bearer', {session: false}),
 async function(req, res, next) {
 
     console.log("delete user", req.params.id)
@@ -335,31 +336,5 @@ router.post('auth/verifytoken/',passport.authenticate('bearer', {session: false}
  function (req, res, next) {
 
 })
-
-/* When we want to protect our fetch in the front end
-    router.get('/',
-passport.authenticate('bearer', { session: false}),
-function (req, res) {
-
-    // passport puts the result of the authenticate
-    // as the user property of req
-    // rename to payload so we know it is
-    // our token payload
-    let {user: payload} = req
-
-    console.log(payload)
-    // deb access code goes here
-
-    //use authInfo (token payload) to
-    // get user from database
-
-    // Verify user has permission for
-    // this endpoint
-    
-    // return data from db
-
-    res.json(payload)
-})
-*/
 
 module.exports = router;

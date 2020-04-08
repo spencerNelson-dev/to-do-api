@@ -41,7 +41,7 @@ router.get('/', passport.authenticate('bearer', {session: false}),
 
 });
 
-// GET single entry
+// GET single task
 router.get('/task/:taskId', function(req, res, next) {
 
     let readObj = {
@@ -79,9 +79,8 @@ router.get('/:userId', function (req, res, next) {
         })
 })
 
-/* POSTS */
 
-// POST Entry
+// POST task
 router.post('/', function (req, res, next) {
 
     entry = req.body
