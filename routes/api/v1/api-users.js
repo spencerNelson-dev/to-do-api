@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt')
 const jwtUtils = require('../../../bin/jwtUtils')
 const ls = require('local-storage')
 
-
+// encrypt our password
  async function checkPassword(password, hash){
 
     return await bcrypt.compare(password,hash)
@@ -21,8 +21,7 @@ router.get('/', passport.authenticate('bearer', {session: false}),
     // verify the bearer token
     let {user} = await jwtUtils.verifyBearerToken(req)
 
-    console.log(user)
-
+    // create the ojbect to send to our dal
     let readObj = {
         usersCollection: req.app.locals.usersCollection
     }
@@ -87,14 +86,11 @@ router.get('/email/:email', function(req, res, next) {
 router.post('/create', passport.authenticate('bearer', {session: false}),
  async function(req, res, next) {
 
-    console.log("create user req.user",req.user)
-    console.log("create user req.body",req.body)
-
+    // bycrpt the password
     req.body.doc.password = await bcrypt.hash(req.body.doc.password, 5)
 
-    await db.create(req.body, dbUsers)
-
-    res.json(req.body)
+    // return the created user
+    res.json(await db.create(req.body, dbUsers))
 })
 
 //PATCH - update user
@@ -109,8 +105,10 @@ async function(req, res, next) {
 
     try {
 
+        // find our user
         let response = await db.readOne(patchObj, dbUsers)
 
+        // if not found throw an error
         if (response == null) {
 
             throw new Error("Not Found")
@@ -240,6 +238,7 @@ router.use('/auth/google/callback',
             lastName: req.user.name.familyName,
             userName: '',
             email: req.user.emails[0].value,
+            //This password is a dummy, and cannot be used to login
             password: 'cna98p4pt9ragph985na',
             admin: false
         }
@@ -289,7 +288,6 @@ router.use('/auth/facebook/callback',
         // if not we will create a new user using the email
         // and name
 
-        
         let names = req.user.displayName.split(" ")
 
         console.log(req.user)
