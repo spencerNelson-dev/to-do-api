@@ -8,8 +8,13 @@ const verify = require('../../../bin/verify')
 
 
 // GET all tasks
+// if a query string of userId is passed
+// then we get only the tasks associated with 
+// that user
 router.get('/', passport.authenticate('bearer', {session: false}),
   async function (req, res, next) {
+
+    let userId = req.query.userId
 
     // verify bearerToken
     let {user} = await jwtUtils.verifyBearerToken(req)
@@ -18,10 +23,14 @@ router.get('/', passport.authenticate('bearer', {session: false}),
     let isVerified = await verify.verifyUser(user)
 
     let readObj = {
-        usersCollection: req.app.locals.usersCollection
+        usersCollection: req.app.locals.usersCollection,
+        id: userId
     }
 
-    if(user.admin && isVerified){
+    // if the user is verified and an admin
+    // but no userId query string is found
+    // then get all of the tasks
+    if(user.admin && isVerified && !userId){
 
         db.readAll(readObj, dbTasks)
         .then(response => {
@@ -33,8 +42,23 @@ router.get('/', passport.authenticate('bearer', {session: false}),
             console.log(error)
             res.json(500)
         })
-    } else {
+        // if there is a user id
+        // only return the tasks for that user
+    } else if(userId){
 
+        db.readAllByUser(readObj, dbTasks)
+        .then(response => {
+
+            res.json(response)
+        })
+        .catch(error => {
+
+            console.log(error)
+            res.json(500)
+        })
+
+        
+    } else {
         res.send("Not Authorized")
     }
 
@@ -42,7 +66,8 @@ router.get('/', passport.authenticate('bearer', {session: false}),
 });
 
 // GET single task 
-router.get('/task/:taskId', function(req, res, next) {
+router.get('/:taskId', passport.authenticate('bearer', {session: false}),
+ function(req, res, next) {
 
     let readObj = {
         id: req.params.taskId,
@@ -59,26 +84,6 @@ router.get('/task/:taskId', function(req, res, next) {
             res.status(500).json(error)
         })
 })
-
-// GET all tasks with a certian user_id
-router.get('/:userId', function (req, res, next) {
-
-    let readObj = {
-        id: req.params.userId,
-        usersCollection: req.app.locals.usersCollection
-    }
-
-    db.readAllByUser(readObj,dbTasks)
-        .then(response => {
-
-            res.json(response)
-        })
-        .catch(error => {
-            console.log(error)
-            res.status(500).json(error)
-        })
-})
-
 
 // POST task
 router.post('/', function (req, res, next) {

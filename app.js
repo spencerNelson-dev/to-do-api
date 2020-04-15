@@ -18,6 +18,8 @@ require('./bin/stratagies/bearer')
 const taskApiRouter = require('./routes/api/v1/api-tasks')
 const userApiRouter = require('./routes/api/v1/api-users')
 
+const reactRouter = require('./routes/react')
+
 var app = express();
 
 //connect to db
@@ -42,7 +44,10 @@ db.connect(app.locals)
 
     //app.use('/', indexRouter);
     app.use('/users', userApiRouter);
-    app.use('/tasks', taskApiRouter)
+    app.use('/tasks', taskApiRouter);
+
+    // directs user back to index
+    app.use('/', reactRouter);
 
     // catch 404 and forward to error handler
     app.use(function (req, res, next) {

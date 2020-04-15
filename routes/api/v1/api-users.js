@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt')
 const jwtUtils = require('../../../bin/jwtUtils')
 const ls = require('local-storage')
 
-// encrypt our password
+//  check our encrypted password
  async function checkPassword(password, hash){
 
     return await bcrypt.compare(password,hash)
