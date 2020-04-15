@@ -16,7 +16,6 @@ const ls = require('local-storage')
 // GET all users
 router.get('/', passport.authenticate('bearer', {session: false}),
  async function (req, res, next) {
-    console.log("get Users")
 
     // verify the bearer token
     let {user} = await jwtUtils.verifyBearerToken(req)
@@ -49,7 +48,6 @@ router.get('/', passport.authenticate('bearer', {session: false}),
 // GET user by id
 router.get('/:id',passport.authenticate('bearer', {session: false}),
  function (req, res, next) {
-    console.log("get user by id")
 
     let readObj = {
         id: req.params.id
@@ -67,7 +65,6 @@ router.get('/:id',passport.authenticate('bearer', {session: false}),
 
 // GET user by email
 router.get('/email/:email', function(req, res, next) {
-    console.log("get user by email")
 
     let readObj = {
         email: req.params.email
@@ -97,6 +94,15 @@ router.post('/', passport.authenticate('bearer', {session: false}),
 //PATCH - update user
 router.patch('/:id', passport.authenticate('bearer', {session: false}),
 async function(req, res, next) {
+
+    let updatedUser = req.body
+
+    try {
+        updatedUser.password = await bcrypt.hash(updatedUser.password, 5)
+    }
+    catch (error) {
+        console.log(error)
+    }
 
     let patchObj = {
         id: req.params.id,
@@ -131,8 +137,6 @@ async function(req, res, next) {
 router.delete('/:id', passport.authenticate('bearer', {session: false}),
 async function(req, res, next) {
 
-    console.log("delete user", req.params.id)
-
     let deleteObj = {
         id: req.params.id,
         usersCollection: req.app.locals.usersCollection
@@ -141,8 +145,6 @@ async function(req, res, next) {
     try {
 
         let foundUser = await db.readOne(deleteObj, dbUsers)
-
-        console.log("found user in user delete", foundUser)
 
         if (foundUser === null) {
 
@@ -161,8 +163,6 @@ async function(req, res, next) {
 // Post login
 router.post('/login', function (req, res, next) {
 
-    console.log("post login")
-
     let sentUser = req.body
 
     db.readAll(sentUser, dbUsers)
@@ -173,7 +173,6 @@ router.post('/login', function (req, res, next) {
 
             // Check to see if the email matches
             if (user.email === sentUser.email) {
-                console.log("Email found")
 
                 // Check to see if the password matches
                 return checkPassword(sentUser.password, user.password)
@@ -246,15 +245,12 @@ router.use('/auth/google/callback',
 
         let users = await db.findUserByEmail(newUser, dbUsers)
         .then (response => {
-    
-            console.log("findUserByEmail Response", response)
+
             return response
         })
         .catch(error => {
             console.error(error.name, error.message)
         })
-
-        console.log(newUser, users)
 
         let user
 
@@ -291,8 +287,6 @@ router.use('/auth/facebook/callback',
 
         let names = req.user.displayName.split(" ")
 
-        console.log(req.user)
-
         let newUser ={
             firstName: names[0],
             lastName: names[names.length - 1],
@@ -305,14 +299,11 @@ router.use('/auth/facebook/callback',
         let users = await db.findUserByEmail(newUser, dbUsers)
         .then (response => {
     
-            console.log("findUserByEmail Response", response)
             return response
         })
         .catch(error => {
             console.error(error.name, error.message)
         })
-
-        console.log(newUser, users)
 
         let user
 

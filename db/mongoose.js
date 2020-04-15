@@ -63,7 +63,7 @@ function create(objCreate, schemaObj) {
     let serial = {}
 
     //use the schema as a template to check for properties
-    //in document to write if the documente has a matching
+    //in document to write if the document has a matching
     //property copy it to new object write the new object
     for (let key in schema.obj){
 

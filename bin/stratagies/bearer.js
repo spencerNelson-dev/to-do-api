@@ -19,7 +19,7 @@ passport.use(new BearerStrategy(
             })
         })
         .then(payload => {
-            console.log(payload)
+
 
             return done(null, payload)
         })

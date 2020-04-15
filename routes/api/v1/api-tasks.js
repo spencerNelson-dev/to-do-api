@@ -23,7 +23,7 @@ router.get('/', passport.authenticate('bearer', {session: false}),
 
     if(user.admin && isVerified){
 
-        db.readAll(readObj,dbTasks)
+        db.readAll(readObj, dbTasks)
         .then(response => {
 
             res.json(response)
@@ -41,7 +41,7 @@ router.get('/', passport.authenticate('bearer', {session: false}),
 
 });
 
-// GET single task
+// GET single task 
 router.get('/task/:taskId', function(req, res, next) {
 
     let readObj = {
@@ -83,7 +83,7 @@ router.get('/:userId', function (req, res, next) {
 // POST task
 router.post('/', function (req, res, next) {
 
-    entry = req.body
+    let entry = req.body
 
     let createObj = {
         doc: entry,
@@ -97,10 +97,6 @@ router.post('/', function (req, res, next) {
         .catch(error => {
             res.status(500).json(error)
         })
-        .catch(err => {
-            res.send(`Task was not created`)
-        })
-
 })
 
 
@@ -137,7 +133,7 @@ router.put('/:id', async function (req, res, next) {
 
     let putObj = {
         id: req.params.id,
-        usersCollection: req.app.locals.usersCollection,
+        usersCollection: req.app.locals.tasksCollection,
         doc: req.body
     }
 
@@ -148,14 +144,12 @@ router.put('/:id', async function (req, res, next) {
         if (response == null) {
 
             // add if not found
-            res.json(await db.create(putObj)) //.ops[0]
+            res.json(await db.create(putObj, dbTasks)) //.ops[0]
 
         } else {
 
             // if found
-            await db.replace(putObj)
-
-            res.json(await db.readOne(putObj)) //.ops[0]
+            res.json(await db.replace(putObj, dbTasks)) //.ops[0]
         }
 
     } catch (error) {
